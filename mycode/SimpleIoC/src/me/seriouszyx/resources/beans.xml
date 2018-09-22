@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans>
+    <bean id="Student" class="me.seriouszyx.pojo.Student">
+        <property name="name" value="ZYX"/>
+        <property name="gender" value="man"/>
+    </bean>
+
+    <bean id="StuService" class="me.seriouszyx.service.StuService">
+        <property ref="Student"/>
+    </bean>
+</beans>
