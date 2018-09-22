@@ -1,22 +1,35 @@
-#   Chapter 4
+#   Spring IoC容器浅析及简单实现
 
-原生的 JavaEE 技术中各个模块之间的联系较强，即耦合度较高。
+<!-- TOC -->
 
-比如完成一个用户的创建事务，视图层会创建业务逻辑层的对象，再在内部调用对象的方法，各个模块的独立性很差，如果某一模块的代码发生改变，其他模块的改动也会很大。
+- [Spring IoC 概述](#spring-ioc-概述)
+- [Spring IoC 简单实现](#spring-ioc-简单实现)
+- [BeanFactory 和 ApplicationContext](#beanfactory-和-applicationcontext)
+- [WebApplicationContext](#webapplicationcontext)
 
-而 Spring 框架的核心——IoC（控制反转）很好的解决了这一问题。控制反转，即某一接口具体实现类的选择控制权从调用类中移除，转交给第三方决定，即由 Spring 容器借由 Bean 配置来进行控制。
+<!-- /TOC -->
 
-可能 IoC 不够开门见山，理解起来较为困难。因此， Martin Fowler 提出了 DI（Dependency Injection，依赖注入）的概念来替代 IoC，即让调用类对某一接口实现类的依赖关系由第三方（容器或写协作类）注入，以移除调用类对某一接口实现类的依赖。
+##	Spring IoC 概述
+
+原生的 JavaEE 技术中各个模块之间的联系较强，即`耦合度较高`。
+
+比如完成一个用户的创建事务，视图层会创建业务逻辑层的对象，再在内部调用对象的方法，各个模块的`独立性很差`，如果某一模块的代码发生改变，其他模块的改动也会很大。
+
+而 Spring 框架的核心——IoC（控制反转）很好的解决了这一问题。控制反转，即`某一接口具体实现类的选择控制权从调用类中移除，转交给第三方决定`，即由 Spring 容器借由 Bean 配置来进行控制。
+
+可能 IoC 不够开门见山，理解起来较为困难。因此， Martin Fowler 提出了 DI（Dependency Injection，依赖注入）的概念来替代 IoC，即`让调用类对某一接口实现类的依赖关系由第三方（容器或写协作类）注入，以移除调用类对某一接口实现类的依赖`。
 
 比如说， 上述例子中，视图层使用业务逻辑层的接口变量，而不需要真正 new 出接口的实现，这样即使接口产生了新的实现或原有实现修改，视图层都能正常运行。
 
-从注入方法上看，IoC 主要划分为三种类型：构造函数注入、属性注入和接口注入。在开发过程中，一般使用属性注入的方法。
+从注入方法上看，IoC 主要划分为三种类型：构造函数注入、属性注入和接口注入。在开发过程中，一般使用`属性注入`的方法。
 
-IoC 不仅可以实现类之间的解耦，还能帮助完成类的初始化与装配工作，让开发者从这些底层实现类的实例化、依赖关系装配等工作中解脱出出来，专注于更有意义的业务逻辑开发工作。
+IoC 不仅可以实现`类之间的解耦`，还能帮助完成`类的初始化与装配工作`，让开发者从这些底层实现类的实例化、依赖关系装配等工作中解脱出出来，专注于更有意义的业务逻辑开发工作。
+
+##	Spring IoC 简单实现
 
 下面实现了一个IoC容器的核心部分，简单模拟了IoC容器的基本功能。
 
-特别说明一点：spring IoC 中使用懒加载机制，在启动 spring IoC 时，只会实例化单例模式的 bean，不会实例化普通的 bean。不过为了简便，我的实现在容器启动的时候就将所有的 bean 进行初始化。
+特别说明一点：spring IoC 中使用`懒加载`机制，在启动 spring IoC 时，只会实例化单例模式的 bean，不会实例化普通的 bean。不过为了简便，我的实现`在容器启动的时候就将所有的 bean 进行初始化`。
 
 下面列举出核心类：
 
@@ -84,7 +97,7 @@ public class StuService {
 
 beans.xml
 
-```java
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 
 <beans>
@@ -189,9 +202,41 @@ public class MyIoCTest {
 测试成功！
 
 ```text
-E:\JDK8\bin\java.exe "-javaagent:E:\IntelliJ IDEA 2018.1.5\lib\idea_rt.jar=1993:E:\IntelliJ IDEA 2018.1.5\bin" -Dfile.encoding=UTF-8 -classpath E:\JDK8\jre\lib\charsets.jar;E:\JDK8\jre\lib\deploy.jar;E:\JDK8\jre\lib\ext\access-bridge-64.jar;E:\JDK8\jre\lib\ext\cldrdata.jar;E:\JDK8\jre\lib\ext\dnsns.jar;E:\JDK8\jre\lib\ext\jaccess.jar;E:\JDK8\jre\lib\ext\jfxrt.jar;E:\JDK8\jre\lib\ext\localedata.jar;E:\JDK8\jre\lib\ext\nashorn.jar;E:\JDK8\jre\lib\ext\sunec.jar;E:\JDK8\jre\lib\ext\sunjce_provider.jar;E:\JDK8\jre\lib\ext\sunmscapi.jar;E:\JDK8\jre\lib\ext\sunpkcs11.jar;E:\JDK8\jre\lib\ext\zipfs.jar;E:\JDK8\jre\lib\javaws.jar;E:\JDK8\jre\lib\jce.jar;E:\JDK8\jre\lib\jfr.jar;E:\JDK8\jre\lib\jfxswt.jar;E:\JDK8\jre\lib\jsse.jar;E:\JDK8\jre\lib\management-agent.jar;E:\JDK8\jre\lib\plugin.jar;E:\JDK8\jre\lib\resources.jar;E:\JDK8\jre\lib\rt.jar;F:\masterspring\mycode\SimpleIoC\out\production\SimpleIoC;F:\masterspring\mycode\SimpleIoC\src\me\seriouszyx\lib\jdom-1.1.3.jar me.seriouszyx.test.MyIoCTest
 My name is ZYX and I'm man .
 
 Process finished with exit code 0
 ```
 
+##  BeanFactory 和 ApplicationContext
+
+Spring的IoC容器不仅仅提供了上述的一些底层工作，还提供了 Bean 实例缓存、生命周期管理、Bean 实例代理、时间发布、资源装载等高级服务。
+
+Bean 工厂是 Spring 框架最核心的接口，提供了该记得 IoC 配置机制。然而，在开发中一般不去直接使用 BeanFactory，它是 Spring 框架的基础设施，面向 Spring 本身；而ApplicationContext 面向使用 Spring 框架的开发者，几乎所有的应用场合都可以直接使用 ApplicationContext 而非底层的 BeanFactory。
+
+BeanFactory 中建议使用 XmlBeanDefinitionReader、DefaultListableBeanFactory 两个实现类。
+
+接口中最主要的方法就是 getBean(String beanName)，该方法从容器中返回特定名称的 Bean.
+
+需要注意的是，在初始化 BeanFactory 时，必须为其提供一种日志框架，一般使用 Loag4J，这样启动 Spring 容器才不会报错。
+
+
+ApplicationContext 由 BeanFactory 派生而来，可以通过配置实现更多面向实际应用的功能。
+
+两者在初始化容器时有一个显著区别：BeanFactory 在初始化容器时并未实例化 Bean，直到第一次访问某个 Bean 时才实例化目标 Bean；而 ApplicationContext 则在初始化应用上下文时就实例化所有单实例的 Bean。
+
+ApplicationContext 的主要实现类是 ClassPathXmlApplicationContext 和 FileSystemXmlApplicationContext，区别是装载配置路径的方式不同，而且它们可以接受多个配置文件的路径。
+
+Spring 同样支持基于类注解的配置方式，一个标注@Configuration 注解的 POJO 即可提供 Spring 所需的 Bean 配置信息。
+
+Spring4.0 支持使用 Groovy DSL 来进行 Bean 的定义配置，基于 Groovy 脚本语言，可以实现复杂、灵活的 Bean 配置逻辑，实现类为 GenericGroovyApplicationContext，推荐使用。
+
+
+##  WebApplicationContext
+
+WebApplicationContext 类专门为 Web 应用准备，由于 web 应用比一般的应用拥有更多的特性，因此 WebApplicationContext 扩展了 ApplicationContext。
+
+因为 WebApplicationContext 需要 ServletContext 实例，它必须在拥有 Web 容器的前提下才能完成启动工作，因此，借助 Servlet 和 ServletContextListener 二者中的任何一个，都能完成启动 Spring Web 应用上下文的工作。
+
+同样，可以使用 XML、注解和 Groovy DSL 三种方式来提供配置信息。
+
+一般在容器初始化前，要先配置日志框架，可以选择将 Log4J 的未知文件防止在类路径 WEB-INF/classes 下，注意在 XML 中将 log4jConfigServlet 的启动顺序号设置为1。
