@@ -32,31 +32,33 @@
 
 ###    完成情况
 
+
 ? 第1篇 基础篇
 
-* [] 第1章 Spring概述	
 
-* [] 第2章 快速入门	
+- [] 第1章 Spring概述	
 
-* [] 第3章 Spring Boot	
+- [] 第2章 快速入门	
+
+- [] 第3章 Spring Boot	
 
 ? 第2篇 核心篇
 
-* [] 第4章 IoC容器	
+- [] 第4章 IoC容器	
 
-* [] 第5章 在IoC容器中装配Bean
+- [] 第5章 在IoC容器中装配Bean
 
-* [] 第6章 Spring容器高级主题	
+- [] 第6章 Spring容器高级主题	
 
-* [] 第7章 Spring AOP基础
+- [] 第7章 Spring AOP基础
 
-* [] 第8章 基于@AspectJ和Schema的
+- [] 第8章 基于@AspectJ和Schema的
 AOP
 
 * [] 第9章 Spring SpEL
 
 ? 第3篇 数据篇
 
-* [] 第10章 Spring对DAO的支持
+- [] 第10章 Spring对DAO的支持
 
-* [] 第11章 Spring的事务管理
+- [] 第11章 Spring的事务管理
