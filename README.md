@@ -28,11 +28,15 @@
 
 进入第5章学习，第5章详细地讲述在 IoC 容器中装配 Bean 的四个方法，包括一些原理的分析。
 
-根据我看过的一些源码还有本书笔者的建议，一般曹勇 XML 配置 DataSource、SessionFactory 等资源 Bean，在 XML 中利用 aop、context 命名空间进行相关主题的配置。其他所有项目中开发的 Bean 都通过基于注解配置的方法进行配置，即整个项目采用“基于 XML+基于注解”的配置方式，很少采用基于 Java 类的配置方法。
+根据我看过的一些源码还有本书笔者的建议，一般采用 XML 配置 DataSource、SessionFactory 等资源 Bean，在 XML 中利用 aop、context 命名空间进行相关主题的配置。其他所有项目中开发的 Bean 都通过基于注解配置的方法进行配置，即整个项目采用“基于 XML+基于注解”的配置方式，很少采用基于 Java 类的配置方法。
 
 不过基于 groovy 的配置方式可以处理更复杂的逻辑，而且 Spring4.0 全面支持 groovy，前景一片美好，以后应该会多去接触它。
 
+>   笔记：[第五章笔记](https://github.com/seriouszyx/LearnSpring/blob/master/notes/Chapter5.md)
+
 *   Day3 
+
+完成了第6章的学习，讲述了 IoC 的底层实现。
 
 *   Day4 
 
@@ -66,7 +70,7 @@
 
 - [x] 第5章 在IoC容器中装配Bean
 
-- [ ] 第6章 Spring容器高级主题	
+- [x] 第6章 Spring容器高级主题	
 
 - [ ] 第7章 Spring AOP基础
 
