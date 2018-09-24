@@ -12,8 +12,25 @@
 
 *   Day1 
 
+1、2两章简单介绍了 Spring 的历史、Spring 4.x 的新特性以及搭建一个论坛的登录模块，让读者快速了解使用 Spring 工作的流程。
+
+而第4章也是较为重要的一章，介绍了 Spring 最核心的 IoC 容器和`控制反转`的概念，通过对反射、XML解析等基础知识的学习，实现了简单的 [IoC容器](https://github.com/seriouszyx/LearnSpring/tree/master/mycode/SimpleIoC)，并总结实现过程写了一篇文章[“Spring IoC容器浅析及简单实现”](https://blog.csdn.net/qq_40950957/article/details/82811507)。
+
+简单了解 BeanFactory、ApplicationFactory 和 WebApplicationFactory 三个 Spring 框架的核心接口，逐渐加深对 Spring 的原理理解和注入方法。
+
+然而对生命周期和 Resource 的理解并不深刻。
+
+>   笔记：[第四章笔记](https://github.com/seriouszyx/LearnSpring/blob/master/notes/Chapter4.md)
+
+
 
 *   Day2
+
+进入第5章学习，第5章详细地讲述在 IoC 容器中装配 Bean 的四个方法，包括一些原理的分析。
+
+根据我看过的一些源码还有本书笔者的建议，一般曹勇 XML 配置 DataSource、SessionFactory 等资源 Bean，在 XML 中利用 aop、context 命名空间进行相关主题的配置。其他所有项目中开发的 Bean 都通过基于注解配置的方法进行配置，即整个项目采用“基于 XML+基于注解”的配置方式，很少采用基于 Java 类的配置方法。
+
+不过基于 groovy 的配置方式可以处理更复杂的逻辑，而且 Spring4.0 全面支持 groovy，前景一片美好，以后应该会多去接触它。
 
 *   Day3 
 
@@ -41,25 +58,25 @@
 
 - [x] 第2章 快速入门	
 
-- [] 第3章 Spring Boot	
+- [ ] 第3章 Spring Boot	
 
 ? 第2篇 核心篇
 
 - [x] 第4章 IoC容器	
 
-- [] 第5章 在IoC容器中装配Bean
+- [x] 第5章 在IoC容器中装配Bean
 
-- [] 第6章 Spring容器高级主题	
+- [ ] 第6章 Spring容器高级主题	
 
-- [] 第7章 Spring AOP基础
+- [ ] 第7章 Spring AOP基础
 
-- [] 第8章 基于@AspectJ和Schema的
+- [ ] 第8章 基于@AspectJ和Schema的
 AOP
 
-* [] 第9章 Spring SpEL
+* [ ] 第9章 Spring SpEL
 
 ? 第3篇 数据篇
 
-- [] 第10章 Spring对DAO的支持
+- [ ] 第10章 Spring对DAO的支持
 
-- [] 第11章 Spring的事务管理
+- [ ] 第11章 Spring的事务管理
