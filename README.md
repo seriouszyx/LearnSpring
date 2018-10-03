@@ -60,7 +60,20 @@
 
 *   Day6 
 
+灵活的 Spring JDBC 和方便的 ORM 框架。因为之前接触过 mybatis，并且 SSM 框架目前使用量日益增加，所以并没有详细地阅读 hibernate 这一部分。
+
+然而本书后面的实例好像是用 hibernate 做持久层框架的，到时候可能会用 mybatis 重写一下。
+
+>   笔记：[第十三章笔记](https://github.com/seriouszyx/LearnSpring/blob/master/notes/Chapter13.md)
+
 *   Day7 
+
+彻底告别`数据篇`，进入激动人心的应用篇。
+
+上来就跳过两章，直接进入第十七章——Spring MVC 的学习。看过刚开始介绍的 demo，感觉开发简直不能再简便了，不过给的实例代码跑不起来，大概要自己手写一次。
+
+>   笔记：[第十七章笔记](https://github.com/seriouszyx/LearnSpring/blob/master/notes/Chapter17.md)
+ 
 
 *   Day8
 
