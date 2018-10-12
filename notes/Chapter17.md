@@ -136,9 +136,166 @@ Spring MVC 通过分析处理方法的签名，将 HTTP 请求信息绑定到处
 
 一般情况下，处理方法的返回值类型为 ModelAndView 或 String，前者包含模型和逻辑视图名，后者仅代表一个逻辑视图名。
 
-###	使用 HttpMessageConverter<T>
+###	处理模型数据
+
+*	ModelAndView
+
+控制器处理方法返回值如果为 ModelAndView，则其既包含视图信息，又包含模型处理信息，这样 Spring MVC 就可以使用视图对模型数据进行渲染。
+
+*	@ModelAttribute
+
+可以在方法或方法参数中进行注解。在方法上使用 @ModelAttribute，则在每个处理方法调用前，都会调用这个方法。
+
+```Java
+	@ModelAttribute
+	public User getUser() {
+		User user = new User();
+		user.setUserId("1001");
+		return user;
+	}
+
+	@RequestMapping(path = "/handle")
+	public String handle(@ModelAttribute("user") User user) {
+		user.setUserName("tom");
+		return "/user/showUser";
+	}
+```
+
+*	Map 及 Model
+
+Spring MVC 在调用方法前会创建一个隐含的模型对象，作为模型数据的存储容器，我们称之为“隐含模型”。如果处理方法的入参为 Map 或 Model 类型，则 Spring MVC 会将隐含模型的引用传递给这些入参，开发者可以通过这个入参对象访问到模型中的所有数据。
+
+```Java
+		@ModelAttribute
+		public User getUser() {
+			User user = new User();
+			user.setUserId("1001");
+			return user;
+		}
+
+		@RequestMapping(path = "/handle")
+		public String handle(ModelMap modelmap) {
+			modelMap.addAttribute("testArr", "value");
+			User user = (User)modelMap.get("user");
+			user.setUserName("tom");
+			return "/user/showUser";
+		}
+```
+
+*	@SessionAttributes
+
+在类前注解声明会向隐含模型中添加一个名为 user 的模型对象。
+
+不过在会话中找不到对应的属性，则抛出 HttpSessionRequiredException 异常。最好在方法上使用 @ModelAttribute 向隐含模型中添加的模型属性。
+
+##	处理方法的数据绑定
 
 
+![20170724175611235.jpg](https://i.loli.net/2018/10/10/5bbdadcccd2cf.jpg)
+
+###	ConversionService
+
+ConversionService 是 Spring 类型转换体系的核心接口，而 ConversionServiceFactoryBean 创建 ConversionService 内建了很多转换器，可完成大多数 Java 类型的转换工作。可通过 ConversionServiceFactoryBean 的 converters 属性注册自定义的类型转换器。
+
+Spring 定义了三种类型的转换器接口：
+
+*	Converter<S, T>
+*	GenericConverter
+*	ConverterFactory
+
+ConversionServiceFactoryBean 的 converters 属性可接受  Converter、ConverterFactory、GenericConverter 或 ConditionalGenericConverter 接口的实现类，并把这些转换器的转换逻辑统一封装到一个 ConversionService 实例对象中。
+
+``举个例子``，假设处理方法中有一个 User 类型的入参，希望讲一个格式化的请求参数字符串直接转换为 User 对象，该字符串的格式为：
+
+>		<userName>:<password>:<realName>
+
+我们可以定义一个将格式化的 String 转换为 User 对象的自定义转换器。
+
+```Java
+	public class StringToUserConverter implements Converter<String, User> {
+		public User Converter(String source) {
+			User user = new User();
+			if (source != null) {
+				String[] items = source.split(":");
+				user.setUserName(items[0]);
+				user.setPassword(items[1]);
+				user.setRealName(items[2]);
+			}
+			return user;
+		}
+	}
+```
+
+接下来将它安装到 Spring 上下文中。
+
+```XML
+	...
+	<mvc:annotation-driven conversion-service="conversionService" />
+	<bean id="conversionService"
+			class="org.springframework.context.support.ConversionServiceFactoryBean">
+			<property name="converters">
+					<list>
+							<bean class="com.smart.domain.StringToUserConverter" />
+					</list>
+			</property>
+	</bean>
+```
+
+然后发送的 URL 请求可以使用 `user=tom:1234:tomson` 的参数，最后会绑定到 Controller 方法的入参中。
+
+### 数据格式化
+
+Spring 引入的格式化框架中有一个重要的接口 `Formatter<T>`
+
+```java
+	package org.springframework.format;
+	public interface Formatter<T> extends Printer<T>, Parse<T> {
+		...
+	}
+```
+Printer<T> 负责对象的格式化输出，Parser<T> 负责格式化对象的输入工作。Spring 提供了三个用于数字化对象格式化的实现类。
+
+实现类|作用|
+---|---|
+NumberFormatter|数字类型对象的格式化|
+CurrencyFormatter|货币类型对象的格式化|
+PercentFormatter|百分数数字类型对象的格式化|
+
+随着 Java 技术的发展，这种硬编码的格式化方式已经过时，可在 Bean 属性设置、Spring MVC 处理方法入参数据绑定、模型数据输出时自动通过注解应用格式化功能。
+
+
+实际上，Spring 是基于对象转换框架植入“格式化”功能的。Spring 定义了一个实现 ConversionService 接口的 FormattingConversionService 实现类，该实现类扩展了 GenericConversionService,因此它既具有类型转换功能，又具有格式化功能。
+
+FormattingConversionService 有一个对应的 FormattingConversionServiceFactoryBean 工厂类，可以在 Spring 上下文中后再一个 FormattingConversionService，通过这个工厂类，既可以注册自定义的转换器，还可以注册自定义的注解驱动逻辑。
+
+使用前要先在配置文件中装配。
+
+```XML
+<mvc:annotation-driven conversion-service="conversionService" />
+<bean id="conversionService"
+		class="org.springframework.formatt.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+				<list>
+						<bean class="com.smart.domain.StringToUserConverter" />
+				</list>
+		</property>
+</bean>
+```
+
+在 PO 中这样使用：
+
+```Java
+	public class User {
+		...
+		@DateTimeFormat(pattern="yyyy-MM-dd")
+		private Date birthday;
+
+		@NumberFormat(pattern="#.###.##")
+		private long salary;
+	}
+```
+
+###	数据校验
 
 
 
@@ -148,3 +305,5 @@ Spring MVC 通过分析处理方法的签名，将 HTTP 请求信息绑定到处
 [SpringMVC中为什么要配置Listener和Servlet](https://blog.csdn.net/fcs_learner/article/details/74085053)
 
 [SpringMVC启动过程详解](https://www.jianshu.com/p/843576c42ba1)
+
+[【SpringMVC】数据处理-数据绑定流程分析](https://blog.csdn.net/u013040472/article/details/76033914)
