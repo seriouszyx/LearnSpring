@@ -297,6 +297,38 @@ FormattingConversionService 有一个对应的 FormattingConversionServiceFactor
 
 ###	数据校验
 
+应用程序在执行业务逻辑前，必须通过数据校验保证接受到的输入数据是正确合法的。
+
+Spring MVC 中定义的 LocalValidatorFactoryBean 既实现了 Spring 的 Validator 接口，又实现了 JSR-303 的 Validator 接口。<mvc:annotation-driven/> 会默认装配一个 LocalValidatorFactoryBean，通过在处理方法的入参上标注 @Valid 注解，即可让 Spring MVC 在完成数据绑定后执行数据校验工作。
+
+```Java
+public class User{
+		private String userId;
+
+		@Pattern(regexp="w{4, 30}")
+		private String userName;
+
+		@Past	// 时间值必须是一个过去的时间
+		@DateTimeFormat(pattern="yyyy-MM-dd")
+		private Date birthday;
+
+}
+```
+
+```Java
+	public class UserController {
+			@RequestMapping(path = "/handle")
+			public String handle(@Valid @ModelAttribute("user")User user,
+													BindingResult bindingResult) {
+						if(bindingResult.hasErrors()) {
+							return "/user/register";
+						} else {
+							return "/user/showUser";
+						}
+			}
+
+	}
+```
 
 
 
