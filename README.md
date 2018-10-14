@@ -86,6 +86,8 @@ Spring MVC 的内容大概看了一半左右，一边看一边整理笔记，有
 
 *   Day9
 
+Spring MVC 已经整理了详细的笔记。大概明天完成一个 Spring 和 Spring MVC 结合的小 demo。
+
 *   Day10
 
 ###    完成情况
@@ -130,7 +132,7 @@ Spring MVC 的内容大概看了一半左右，一边看一边整理笔记，有
 
 - [ ] 第16章 任务调度和异步执行器
 
-- [ ] 第17章 Spring MVC
+- [x] 第17章 Spring MVC
 
 - [ ] 第18章 实战案例开发
 
